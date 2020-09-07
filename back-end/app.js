@@ -1,6 +1,5 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const bodyParser = require ('body-parser')
 const cors = require('cors')
 const passport = require('passport')
 const app = express()
@@ -8,7 +7,7 @@ const port = 8000;
 
 // middlewares 
 app.use(cors())
-app.use(bodyParser.json())
+app.use(express.json())
 
 // Routes
 const UserRoute = require('./routes/UserRoute')
