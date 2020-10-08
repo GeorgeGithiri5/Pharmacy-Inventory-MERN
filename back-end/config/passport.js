@@ -1,20 +1,23 @@
-const JwtStrategy = require('passport-jwt').Strategy
-const ExtractJwt = require('passport-jwt').ExtractJwt
-const mongoose = require("mongoose")
-const Admin = mongoose.model('AdminSchema')
-const keys = require('./keys')
-const opt = {}
-opt.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opt.secretOrKey = keys.secretOrKey
+const JWTStratery = require('passport-jwt').Strategy
+const ExtractJWT = require('passport-jwt').ExtractJwt
+const mongoose = require('mongoose')
+const passport = require('passport')
+const Admin = mongoose.model('admin')
+const keys = require('../config/keys')
+
+const opts = {}
+opts.jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = keys.secretOrkey
 
 module.exports = passport =>{
     passport.use(
-        new JwtStrategy(opt,(jwt_payload,done)=>{
+        new JWTStratery(opts,(jwt_payload,done)=>{
             Admin.findById(jwt_payload.id)
-                .then(user=>{
-                    if(user){
-                        return done(null,user)
-                    } return done(null,false)
+                .then(admin=>{
+                    if(admin){
+                        return done(null,admin)
+                    }
+                    return done(null,false)
                 })
                 .catch(err=>console.log(err))
         })

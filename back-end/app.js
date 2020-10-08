@@ -1,35 +1,34 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const bodyParser = require ('body-parser')
+const bodyparser = require('body-parser')
 const cors = require('cors')
 const passport = require('passport')
+
+const db = require('./config/keys').MongoURI
+
 const app = express()
-const port = 8000;
 
-// middlewares 
+// Body parser middleware
+app.use(bodyparser.urlencoded({extended:false}))
+app.use(bodyparser.json())
+
 app.use(cors())
-app.use(bodyParser.json())
 
-// Routes
-const UserRoute = require('./routes/UserRoute')
+mongoose.connect(db,{ useUnifiedTopology: true })
+        .then(()=>console.log("Connected to the database"))
+        .catch((err)=>console.log(err))
+
 const AdminRoute = require('./routes/Admin')
-const StoreRoute = require('./routes/ProductRoute')
-const OrderRoute = require('./routes/OrderRoutes')
-const AnnouncementRoute = require('./routes/AnnounceRoute')
-app.use('/Announcement',AnnouncementRoute)
-app.use('/Order',OrderRoute)
-app.use('/Store',StoreRoute)
-app.use('/Admin', AdminRoute) 
-app.use('/Users',UserRoute)
+const ProductRoute = require('./routes/Product')
+const SalesRoute = require('./routes/Sales')
 
-// app.use(passport.initialize())
-// require("./config/passport")(passport)
+app.use('/sales',SalesRoute)
+app.use('/products',ProductRoute)
+app.use('/Admin',AdminRoute)
 
-// connect to database 
-mongoose.connect('mongodb://127.0.0.1:27017/Phamarcy-Inventory',()=>{
-    console.log('Connected to database')
-})
+app.use(passport.initialize())
+require('./config/passport')(passport)
 
-app.listen(port,()=>{
-    console.log("Listening at Port: " + `${port}`);
-})
+const PORT = process.env.PORT || 5000
+
+app.listen(PORT,()=>console.log(`Server running on Port ${PORT}: http:localhost:${5000}`))
